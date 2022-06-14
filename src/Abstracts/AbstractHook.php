@@ -13,7 +13,10 @@ abstract class AbstractHook
 
     protected string $hookFunction;
 
-    public function __invoke()
+    /**
+     * Construct and add the hook
+     */
+    public function __invoke(): void
     {
         if ($numArgs = $this->getHandleParametersCount()) {
             $this->numArgs = $numArgs;
@@ -22,22 +25,39 @@ abstract class AbstractHook
         $this->add();
     }
 
-    protected function getReflectionClass()
+    /**
+     * Get the hook class' reflection class instance
+     * @return \ReflectionClass
+     * @throws \ReflectionException
+     */
+    protected function getReflectionClass(): \ReflectionClass
     {
         return new \ReflectionClass(get_called_class());
     }
 
-    protected function getReflectionHandleMethod()
+    /**
+     * Get the Reflections Handle method
+     *
+     * @return \ReflectionMethod|bool
+     * @throws \ReflectionException
+     */
+    protected function getReflectionHandleMethod(): ?\ReflectionMethod
     {
         $rc = $this->getReflectionClass();
         if (empty($rc)) {
-            return false;
+            return null;
         }
 
         return $rc->getMethod('handle');
     }
 
-    protected function getHandleParametersCount()
+    /**
+     * Get the Reflections Handle methods argument count
+     *
+     * @return int
+     * @throws \ReflectionException
+     */
+    protected function getHandleParametersCount(): int
     {
         $rm = $this->getReflectionHandleMethod();
         if (! $rm) {
@@ -47,7 +67,10 @@ abstract class AbstractHook
         return $rm->getNumberOfParameters();
     }
 
-    protected function add()
+    /**
+     * Add the filter or action
+     */
+    protected function add(): void
     {
         $function = $this->hookFunction;
 
