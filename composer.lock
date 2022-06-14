@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "070a8b0dd8bebd6a76991ae6cabf862b",
+    "content-hash": "54a98a1e8858ed0ad4b9b6ffb18519bd",
     "packages": [
         {
             "name": "morningtrain/php-loader",

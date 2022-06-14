@@ -32,7 +32,7 @@
         "morningtrain/php-loader": "^0.3.0"
     },
     "require-dev": {
-        "pestphp/pest": "^1.20"
+        "pestphp/pest": "^1.21"
     },
     "scripts": {
         "test": "vendor/bin/pest",
