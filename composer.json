@@ -3,7 +3,7 @@
     "description": "A system for organizing hooks",
     "minimum-stability": "dev",
     "license": "proprietary",
-    "version": "v0.0.2",
+    "version": "v0.1.0",
     "authors": [
         {
             "name": "Morningtrain - Mathias Højrup Munk",
