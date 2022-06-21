@@ -7,81 +7,40 @@ namespace Morningtrain\WP\Hooks\Abstracts;
  */
 abstract class AbstractHook
 {
-    protected string|array $hook;
+
     protected int $priority = 10;
     protected int $numArgs = 1;
+    protected $callback;
 
-    protected string $hookFunction;
-
-    /**
-     * Construct and add the hook
-     */
-    public function __invoke(): void
+    public function __construct(protected string|array $hook, $callback)
     {
-        if ($numArgs = $this->getHandleParametersCount()) {
-            $this->numArgs = $numArgs;
-        }
+        $this->callback = $callback;
+    }
 
+    public function __destruct()
+    {
         $this->add();
     }
 
+    public function priority(int $priority): static
+    {
+        $this->priority = $priority;
+
+        return $this;
+    }
+
     /**
-     * Get the hook class' reflection class instance
-     * @return \ReflectionClass
      * @throws \ReflectionException
      */
-    protected function getReflectionClass(): \ReflectionClass
+    protected function findNumArgs(callable $callable): int
     {
-        return new \ReflectionClass(get_called_class());
+        $CReflection = is_array($callable) ?
+            new \ReflectionMethod($callable[0], $callable[1]) :
+            new \ReflectionFunction($callable);
+
+        return $CReflection->getNumberOfParameters();
     }
 
-    /**
-     * Get the Reflections Handle method
-     *
-     * @return \ReflectionMethod|bool
-     * @throws \ReflectionException
-     */
-    protected function getReflectionHandleMethod(): ?\ReflectionMethod
-    {
-        $rc = $this->getReflectionClass();
-        if (empty($rc)) {
-            return null;
-        }
+    abstract protected function add();
 
-        return $rc->getMethod('handle');
-    }
-
-    /**
-     * Get the Reflections Handle methods argument count
-     *
-     * @return int
-     * @throws \ReflectionException
-     */
-    protected function getHandleParametersCount(): int
-    {
-        $rm = $this->getReflectionHandleMethod();
-        if (! $rm) {
-            return 1;
-        }
-
-        return $rm->getNumberOfParameters();
-    }
-
-    /**
-     * Add the filter or action
-     */
-    protected function add(): void
-    {
-        $function = $this->hookFunction;
-
-        if (! function_exists($function)) {
-            return;
-        }
-
-        foreach ((array) $this->hook as $hook) {
-            $function($hook, [$this, 'handle'], $this->priority, $this->numArgs);
-        }
-    }
-
-    // Extended class must implement handle()
 }
