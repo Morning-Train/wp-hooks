@@ -51,12 +51,12 @@ class View extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
     protected function add()
     {
         foreach ((array) $this->hook as $hook) {
-            $token = ViewRenderer::getToken(); // Get a token as ID from the ViewRenderer helper class
+            $token = CallbackManager::getToken(); // Get a token as ID from the ViewRenderer helper class
             $this->callback = [
-                ViewRenderer::class,
+                CallbackManager::class,
                 $token,
             ]; // Set the ViewRenderer as callback manager with the token as method for identification
-            ViewRenderer::addAction($token,
+            CallbackManager::addAction($token,
                 $this->view); // Add this action as token and view to the ViewRenderer so that it can recognize this action later
             \add_action($hook, $this->callback, $this->priority, $this->numArgs);
         }

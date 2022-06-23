@@ -5,7 +5,7 @@ namespace Morningtrain\WP\Hooks\Classes;
 /**
  * Class for rendering views on actions
  */
-class ViewRenderer
+class CallbackManager
 {
     // The actions known. As token => view
     protected static array $actions = [];
