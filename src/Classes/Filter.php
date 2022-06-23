@@ -10,7 +10,7 @@ namespace Morningtrain\WP\Hooks\Classes;
 class Filter extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
 {
 
-    public function filter(callable $callback): static
+    public function return(callable $callback): static
     {
         $this->callback = $callback;
 

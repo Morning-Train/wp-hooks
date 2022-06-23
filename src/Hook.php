@@ -59,7 +59,7 @@ class Hook
     {
         $filter = new Filter($hook);
         if ($callback !== null) {
-            $filter->filter($callback);
+            $filter->return($callback);
         }
 
         return $filter;
