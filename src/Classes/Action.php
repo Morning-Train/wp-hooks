@@ -17,6 +17,14 @@ class Action extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
         return $this;
     }
 
+    public function view(string $view): static
+    {
+        $this->useCallbackManager('view', $view);
+        $this->numArgs = 1;
+
+        return $this;
+    }
+
     /**
      * Add the action for each hook
      * This is done on __destruct automatically
@@ -27,7 +35,9 @@ class Action extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
      */
     protected function add()
     {
-        $this->numArgs = $this->findNumArgs($this->callback);
+        if ($this->numArgs === null) {
+            $this->numArgs = $this->findNumArgs($this->callback);
+        }
         foreach ((array) $this->hook as $hook) {
             \add_action($hook, $this->callback, $this->priority, $this->numArgs);
         }

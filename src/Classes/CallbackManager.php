@@ -7,7 +7,7 @@ namespace Morningtrain\WP\Hooks\Classes;
  */
 class CallbackManager
 {
-    // The actions known. As token => view
+    // The actions known. As token => [method,args]
     protected static array $actions = [];
 
     /**
@@ -16,14 +16,12 @@ class CallbackManager
      * @param  string  $name  The action token
      * @param  array  $arguments  The action arguments
      *
-     * @throws \Morningtrain\WP\View\Exceptions\MissingPackageException
-     * @throws \ReflectionException
      */
     public static function __callStatic(string $name, array $arguments)
     {
         if (key_exists($name, static::$actions)) {
-            // If this token is recognized then render its view
-            echo \Morningtrain\WP\View\View::render(static::$actions[$name], $arguments);
+            $action = static::$actions[$name];
+            static::{$action['method']}($action['args'], $arguments);
         }
     }
 
@@ -31,11 +29,15 @@ class CallbackManager
      * Add an action to the renderer
      *
      * @param  string  $token  The token identifier
-     * @param  string  $view  The view to render when called
+     * @param  string  $method  Method on CallbackManager to call
+     * @param  mixed  $args  Args for method
      */
-    public static function addAction(string $token, string $view)
+    public static function addAction(string $token, string $method, $args = null)
     {
-        static::$actions[$token] = $view;
+        static::$actions[$token] = [
+            'method' => $method,
+            'args' => $args,
+        ];
     }
 
     public static function returnTrue(): bool
@@ -46,6 +48,11 @@ class CallbackManager
     public static function returnFalse(): bool
     {
         return false;
+    }
+
+    public static function view($view, $arguments)
+    {
+        echo \Morningtrain\WP\View\View::render($view, $arguments);
     }
 
     /**

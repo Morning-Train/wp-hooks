@@ -13,7 +13,7 @@ namespace Morningtrain\WP\Hooks\Classes;
 class View extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
 {
     protected string $view;
-    protected int $numArgs = 1;
+    protected ?int $numArgs = 1;
 
     /**
      * Register an action that renders a view
@@ -50,14 +50,8 @@ class View extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
      */
     protected function add()
     {
+        $this->useCallbackManager('view', $this->view);
         foreach ((array) $this->hook as $hook) {
-            $token = CallbackManager::getToken(); // Get a token as ID from the ViewRenderer helper class
-            $this->callback = [
-                CallbackManager::class,
-                $token,
-            ]; // Set the ViewRenderer as callback manager with the token as method for identification
-            CallbackManager::addAction($token,
-                $this->view); // Add this action as token and view to the ViewRenderer so that it can recognize this action later
             \add_action($hook, $this->callback, $this->priority, $this->numArgs);
         }
     }

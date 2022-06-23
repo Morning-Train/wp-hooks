@@ -2,6 +2,8 @@
 
 namespace Morningtrain\WP\Hooks\Abstracts;
 
+use Morningtrain\WP\Hooks\Classes\CallbackManager;
+
 /**
  *
  */
@@ -9,7 +11,7 @@ abstract class AbstractHook
 {
 
     protected int $priority = 10;
-    protected int $numArgs = 1;
+    protected ?int $numArgs = null;
     protected $callback = null;
 
     /**
@@ -65,4 +67,17 @@ abstract class AbstractHook
      */
     abstract protected function add();
 
+    protected function useCallbackManager(string $method, $args = null)
+    {
+        // Get a token as ID from the CallbackManager
+        $token = CallbackManager::getToken();
+        // Set the ViewRenderer as callback manager with the token as method for identification
+        $this->callback = [
+            CallbackManager::class,
+            $token,
+        ];
+
+        // Add this action as method with args to the CallbackManager so that it can recognize this action later
+        CallbackManager::addAction($token, $method, $args);
+    }
 }
