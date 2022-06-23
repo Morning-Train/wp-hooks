@@ -9,6 +9,28 @@ namespace Morningtrain\WP\Hooks\Classes;
  */
 class Filter extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
 {
+
+    public function filter(callable $callback): static
+    {
+        $this->callback = $callback;
+
+        return $this;
+    }
+
+    public function returnTrue(): static
+    {
+        $this->callback = [CallbackManager::class, __FUNCTION__];
+
+        return $this;
+    }
+
+    public function returnFalse(): static
+    {
+        $this->callback = [CallbackManager::class, __FUNCTION__];
+
+        return $this;
+    }
+
     /**
      * Add the filter for each hook
      * This is done on __destruct automatically

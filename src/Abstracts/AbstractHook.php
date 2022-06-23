@@ -10,16 +10,15 @@ abstract class AbstractHook
 
     protected int $priority = 10;
     protected int $numArgs = 1;
-    protected $callback;
+    protected $callback = null;
 
     /**
      * @param  string|array  $hook  or hooks to apply to
      *
      * @param $callback
      */
-    public function __construct(protected string|array $hook, $callback)
+    public function __construct(protected string|array $hook)
     {
-        $this->callback = $callback;
     }
 
     /**

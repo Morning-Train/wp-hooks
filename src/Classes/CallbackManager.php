@@ -38,6 +38,16 @@ class CallbackManager
         static::$actions[$token] = $view;
     }
 
+    public static function returnTrue(): bool
+    {
+        return true;
+    }
+
+    public static function returnFalse(): bool
+    {
+        return false;
+    }
+
     /**
      * Get a new unique token
      *

@@ -10,6 +10,13 @@ namespace Morningtrain\WP\Hooks\Classes;
 class Action extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
 {
 
+    public function handle(callable $callback): static
+    {
+        $this->callback = $callback;
+
+        return $this;
+    }
+
     /**
      * Add the action for each hook
      * This is done on __destruct automatically

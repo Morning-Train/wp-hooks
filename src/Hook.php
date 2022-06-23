@@ -28,14 +28,19 @@ class Hook
      * You should refer to some other managing class in your callback
      *
      * @param  string|array  $hook
-     * @param  callable  $callback
+     * @param  ?callable  $callback
      *
      * @return Action
      * @see https://developer.wordpress.org/reference/functions/add_action/
      */
-    public static function action(string|array $hook, callable $callback): Action
+    public static function action(string|array $hook, ?callable $callback = null): Action
     {
-        return new Action($hook, $callback);
+        $action = new Action($hook);
+        if ($callback !== null) {
+            $action->handle($callback);
+        }
+
+        return $action;
     }
 
     /**
@@ -45,14 +50,19 @@ class Hook
      * Remember that filters must return a new or modified version of its first param
      *
      * @param  string|array  $hook
-     * @param  callable  $callback
+     * @param  ?callable  $callback
      *
      * @return Filter
      * @see https://developer.wordpress.org/reference/functions/add_filter/
      */
-    public static function filter(string|array $hook, callable $callback): Filter
+    public static function filter(string|array $hook, ?callable $callback = null): Filter
     {
-        return new Filter($hook, $callback);
+        $filter = new Filter($hook);
+        if ($callback !== null) {
+            $filter->filter($callback);
+        }
+
+        return $filter;
     }
 
     /**
