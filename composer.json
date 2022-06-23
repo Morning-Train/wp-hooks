@@ -24,7 +24,8 @@
     "autoload-dev": {
         "psr-4": {
             "Morningtrain\\WP\\Hooks\\Tests\\Unit\\": "tests/Unit",
-            "Morningtrain\\WP\\Hooks\\Tests\\Feature\\": "tests/Feature"
+            "Morningtrain\\WP\\Hooks\\Tests\\Feature\\": "tests/Feature",
+            "TestApp\\": "tests/TestApp"
         }
     },
     "require": {

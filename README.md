@@ -46,7 +46,7 @@ To load all Hooks of a given directory
 
 ```php
 // Load all .php files in ./Hooks and add all found Hooks
-\Morningtrain\WP\Hooks\Hooks::loadDir(__DIR__ . "/Hooks");
+\Morningtrain\WP\Hooks\Hook::loadDir(__DIR__ . "/Hooks");
 ```
 
 ### Multiple Directories
@@ -55,7 +55,7 @@ Since this tool uses PHP Loader, you may use multiple directories.
 
 ```php
 // Load all .php files in ./Hooks and add all found Hooks
-\Morningtrain\WP\Hooks\Hooks::loadDir([__DIR__ . "/Hooks",__DIR__ . "/EvenMoreHooks"]);
+\Morningtrain\WP\Hooks\Hook::loadDir([__DIR__ . "/Hooks",__DIR__ . "/EvenMoreHooks"]);
 ```
 
 ## Creating a Hook

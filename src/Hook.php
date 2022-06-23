@@ -12,7 +12,7 @@ use Morningtrain\WP\Hooks\Classes\View;
  * For registering action and filters
  * ... and views!
  */
-class Hooks
+class Hook
 {
     /**
      * Load all .php files in directory / directories
