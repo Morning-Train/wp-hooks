@@ -1,9 +1,5 @@
 # WP Hooks
 
-[![Latest Release](https://backuptrain.dk/internal-projects/wp/wp-hooks/-/badges/release.svg)](https://backuptrain.dk/internal-projects/wp/wp-hooks/-/releases)
-[![pipeline status](https://backuptrain.dk/internal-projects/wp/wp-hooks/badges/master/pipeline.svg)](https://backuptrain.dk/internal-projects/wp/wp-hooks/-/pipelines)
-[![coverage status](https://backuptrain.dk/internal-projects/wp/wp-hooks/badges/master/coverage.svg)](https://backuptrain.dk/internal-projects/wp/wp-hooks/-/graphs/master/charts)
-
 To let you organize all your WordPress actions and filters.
 
 ## Table of Contents
@@ -14,17 +10,24 @@ To let you organize all your WordPress actions and filters.
 - [Dependencies](#dependencies)
     - [morningtrain/php-loader](#morningtrainphp-loader)
 - [Usage](#usage)
+  - [Creating a hook](#creating-a-hook)
+      - [Adding an action](#adding-an-action)
+      - [Adding a filter](#adding-a-filter)
+      - [Adding a view on an action](#adding-a-view-on-an-action)
+- [Credits](#credits)
+- [Testing](#testing)
+- [License](#license)
+
 
 ## Introduction
 
 This tool is made for organizing WordPress hooks.
 
-Instead of calling `add_action` and `add_filter` everywhere in your codebase you can create a directory for ALL your
-project hooks!
+This tool lets you:
 
-In here you create a class for every hook you wish to add. Either action or filter.
-
-A Hook is composed of a hook, such as `init`, a priority and a callback named `handle()`
+- Load all .php files recursively in a directory
+- Add filters and action using a fluid api
+- Render Blade views directly on an action (if morningtrain/wp-view is installed)
 
 ## Getting Started
 
@@ -34,11 +37,21 @@ To use the tool have a look at [Usage](#usage)
 
 ### Installation
 
+Install with composer
+
+```bash
+composer require morningtrain/wp-hooks
+```
+
 ## Dependencies
 
 ### morningtrain/php-loader
 
-[PHP Loader](https://grandcentral.backuptrain.dk/internal-projects/php-loader) is used to load and initialize all Hooks
+[PHP Loader](https://github.com/Morning-Train/php-loader) is used to load and initialize all Hooks
+
+### morningtrain/wp-view (optional)
+
+[WP View](https://github.com/Morning-Train/wp-view) is used to load and initialize all Hooks
 
 ## Usage
 
@@ -46,7 +59,7 @@ To load all Hooks of a given directory
 
 ```php
 // Load all .php files in ./Hooks and add all found Hooks
-\Morningtrain\WP\Hooks\Hook::loadDir(__DIR__ . "/Hooks");
+\Morningtrain\WP\Hooks\Hook::loadDir(__DIR__ . "/App/Hooks");
 ```
 
 ### Multiple Directories
@@ -55,72 +68,99 @@ Since this tool uses PHP Loader, you may use multiple directories.
 
 ```php
 // Load all .php files in ./Hooks and add all found Hooks
-\Morningtrain\WP\Hooks\Hook::loadDir([__DIR__ . "/Hooks",__DIR__ . "/EvenMoreHooks"]);
+\Morningtrain\WP\Hooks\Hook::loadDir([__DIR__ . "/App/Hooks",__DIR__ . "/EvenMoreHooks"]);
 ```
 
 ## Creating a Hook
 
-### Creating an action
+To create a hook first call `Hook::action`, `Hook::filter` or `Hook::view`. Then start a chain to add additional
+parameters.
+
+### Adding an action
+
+To add an action call `Hook::action`. You may either add the callback as the second parameter or by using `handle()`
 
 ```php
-namespace MyApp\Hooks;
+\Morningtrain\WP\Hooks\Hook::action('init',[Some::class, 'someMethod']);
+// is the same as
+\Morningtrain\WP\Hooks\Hook::action('init')
+    ->handle([Some::class, 'someMethod']);
 
-class RemoveCommentsMenuItem extends \Morningtrain\WP\Hooks\Abstracts\AbstractActionHook
-{
-    protected string|array $hook = 'admin_menu';
+// With a priority
+\Morningtrain\WP\Hooks\Hook::action('init')
+    ->priority(20)
+    ->handle([Some::class, 'someMethod']);
 
-    public function handle()
-    {
-        global $wp_admin_bar;
-        $wp_admin_bar->remove_menu('comments');
-    }
-
-}
+// Rendering a view
+\Morningtrain\WP\Hooks\Hook::action('init')
+    ->view('some_view');
 ```
 
-### Creating a filter
+**Note** that it is not necessary to define the number of args for the callback. The action (or filter) will look at the
+callback's definition to know how many arguments it takes.
+
+### Adding a filter
+
+Adding filters is just like adding action. Call `Hook::filter`. You may either add the callback as the second parameter
+or by using `filter()`
 
 ```php
-namespace MyApp\Hooks;
+\Morningtrain\WP\Hooks\Hook::filter('mime_types',[Some::class, 'addSvgMimeType']);
+// is the same as
+\Morningtrain\WP\Hooks\Hook::filter('mime_types')
+    ->filter([Some::class, 'addSvgMimeType']);
 
-class AllowVideoAndSvgUpload extends \Morningtrain\WP\Hooks\Abstracts\AbstractFilterHook
-{
-    protected string|array $hook = 'mime_types';
+// With a priority
+\Morningtrain\WP\Hooks\Hook::filter('mime_types')
+    ->priority(20)
+    ->filter([Some::class, 'addSvgMimeType']);
 
-    public function handle($wp_get_mime_types)
-    {
-        $wp_get_mime_types['webp'] = 'image/webp';
-        $wp_get_mime_types['svg'] = 'image/svg+xml';
-        
-        return $wp_get_mime_types;
-    }
 
-}
+// For simple filters that return true or false
+\Morningtrain\WP\Hooks\Hook::filter('use_some_feature')
+    ->returnTrue();
+\Morningtrain\WP\Hooks\Hook::filter('use_some_feature')
+    ->returnFalse();
+
 ```
 
-## Setting priority
+**Note** that it is not necessary to define the number of args for the callback. The action (or filter) will look at the
+callback's definition to know how many arguments it takes.
 
-To set the priority simply add its prop. Default is, as always, 10.
+### Adding a view on an action
+
+You may, if the `morningtrain/wp-view` package is installed, render a blade view directly from an action.
 
 ```php
-namespace MyApp\Hooks;
-
-class MadeByTagline extends \Morningtrain\WP\Hooks\Abstracts\AbstractActionHook
-{
-    protected string|array $hook = 'footer';
-    protected int $priority = 999;
-
-    public function handle()
-    {
-        echo "Made by someguy@morningtrain.dk";
-    }
-
-}
+    // This will render the footer/copyright view in the footer
+    \Morningtrain\WP\Hooks\Hook::view('footer','footer/copyright');
 ```
 
-## NumArgs
+**Note** that you MUST define the number of args used in the hook since the hook has no callback method to analyze.
 
-There is no need to set the number of expected args for the callback method.
+If you need to use the action params in your view you may render your view from another method or
+use [view composing](https://laravel.com/docs/9.x/views#view-composers).
 
-`AbstractHook` looks at the declaration of handle and counts the number af args it has. So, in short, numArgs will
-always be the same as your `handle` reguires!
+```php
+// An action that looks something like this: do_action('some_post_action',$postId);
+\Morningtrain\WP\Hooks\Hook::view('some_post_action','someView');
+\Morningtrain\WP\View\View::composer('some_post_action',function($view){
+    [$postId] = $view;
+    $view->with('postId',$postId);
+});
+```
+
+## Credits
+
+- [Mathias Munk](https://github.com/mrmoeg)
+- [All Contributors](../../contributors)
+
+## Testing
+
+```bash
+composer test
+```
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE) for more information.

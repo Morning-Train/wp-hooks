@@ -1,21 +1,19 @@
 {
     "name": "morningtrain/wp-hooks",
-    "description": "A system for organizing hooks",
-    "minimum-stability": "dev",
-    "license": "proprietary",
-    "version": "v0.2.0",
+    "description": "A system for organizing WordPress hooks",
+    "keywords": [
+        "wordpress",
+        "morningtrain",
+        "hooks"
+    ],
+    "minimum-stability": "stable",
+    "license": "MIT",
     "authors": [
         {
             "name": "Morningtrain - Mathias Højrup Munk",
             "email": "mh@morningtrain.dk"
         }
     ],
-    "repositories": {
-        "backuptrain.dk/9": {
-            "type": "composer",
-            "url": "https://backuptrain.dk/api/v4/group/9/-/packages/composer/packages.json"
-        }
-    },
     "autoload": {
         "psr-4": {
             "Morningtrain\\WP\\Hooks\\": "src/"
@@ -36,6 +34,9 @@
         "pestphp/pest": "^1.21",
         "brain/monkey": "~2.0.0"
     },
+    "suggest": {
+        "morningtrain/wp-view": "Allows rendering Blade templates directly on an action"
+    },
     "scripts": {
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage"
@@ -44,10 +45,7 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true
-        },
-        "gitlab-domains": [
-            "backuptrain.dk"
-        ]
+        }
     },
     "prefer-stable": true
 }
