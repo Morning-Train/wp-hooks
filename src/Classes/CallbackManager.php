@@ -21,7 +21,8 @@ class CallbackManager
     {
         if (key_exists($name, static::$actions)) {
             $action = static::$actions[$name];
-            static::{$action['method']}($action['args'], $arguments);
+
+            return static::{$action['method']}($action['args'], $arguments);
         }
     }
 
@@ -53,6 +54,11 @@ class CallbackManager
     public static function view($view, $arguments)
     {
         echo \Morningtrain\WP\View\View::render($view, $arguments);
+    }
+
+    public static function invoke($class, $arguments)
+    {
+        return (new $class)(...$arguments);
     }
 
     /**

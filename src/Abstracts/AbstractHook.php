@@ -3,6 +3,7 @@
 namespace Morningtrain\WP\Hooks\Abstracts;
 
 use Morningtrain\WP\Hooks\Classes\CallbackManager;
+use PHPUnit\TextUI\ReflectionException;
 
 /**
  *
@@ -51,13 +52,32 @@ abstract class AbstractHook
      *
      * @throws \ReflectionException
      */
-    protected function findNumArgs(callable $callable): int
+    protected function findNumArgs(string|callable $callable): int
     {
-        $CReflection = is_array($callable) ?
-            new \ReflectionMethod($callable[0], $callable[1]) :
-            new \ReflectionFunction($callable);
+        if (is_array($callable)) {
+            try {
+                return (new \ReflectionMethod($callable[0], $callable[1]))->getNumberOfParameters();
+            } catch (\ReflectionException $e) {
+                return 0;
+            }
+        }
+        if (is_string($callable) && class_exists($callable)) {
+            $reflectionClass = new \ReflectionClass($callable);
+            if ($reflectionClass->hasMethod('__invoke')) {
+                return $reflectionClass->getMethod('__invoke')->getNumberOfParameters();
+            }
 
-        return $CReflection->getNumberOfParameters();
+            return 0;
+        }
+        if (is_string($callable) && function_exists($callable)) {
+            return (new \ReflectionFunction($callable))->getNumberOfParameters();
+        }
+
+        if(is_callable($callable)){
+            return (new \ReflectionFunction($callable))->getNumberOfParameters();
+        }
+
+        return 0;
     }
 
     /**

@@ -12,7 +12,7 @@ class Action extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
 
     protected bool $proactive = false;
 
-    public function handle(callable $callback): static
+    public function handle(string|callable $callback): static
     {
         $this->callback = $callback;
 
@@ -56,6 +56,9 @@ class Action extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
     {
         if ($this->numArgs === null) {
             $this->numArgs = $this->findNumArgs($this->callback);
+        }
+        if(is_string($this->callback) && class_exists($this->callback)){
+            $this->useCallbackManager('invoke', $this->callback);
         }
         foreach ((array) $this->hook as $hook) {
             if ($this->proactive && \did_action($hook)) {
