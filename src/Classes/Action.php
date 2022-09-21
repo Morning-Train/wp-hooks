@@ -10,6 +10,8 @@ namespace Morningtrain\WP\Hooks\Classes;
 class Action extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
 {
 
+    protected bool $proactive = false;
+
     public function handle(callable $callback): static
     {
         $this->callback = $callback;
@@ -21,6 +23,23 @@ class Action extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
     {
         $this->useCallbackManager('view', $view);
         $this->numArgs = 1;
+
+        return $this;
+    }
+
+    /**
+     * Makes the action proactive
+     *
+     * This calls the callback immediately if the action has already been called.
+     *
+     * NOTE: Since the callback will be called directly, no args will be supplied.
+     * This method is mainly useful for initializing parts of the codebase after a given action has been triggered.
+     *
+     * @return $this
+     */
+    public function proactive(): static
+    {
+        $this->proactive = true;
 
         return $this;
     }
@@ -39,6 +58,10 @@ class Action extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
             $this->numArgs = $this->findNumArgs($this->callback);
         }
         foreach ((array) $this->hook as $hook) {
+            if ($this->proactive && \did_action($hook)) {
+                ($this->callback)();
+                continue;
+            }
             \add_action($hook, $this->callback, $this->priority, $this->numArgs);
         }
     }
