@@ -19,9 +19,11 @@ class CallbackManager
      */
     public static function __callStatic(string $name, array $arguments)
     {
+        // If we know of an action/filter matching this name, then call it!
         if (key_exists($name, static::$actions)) {
             $action = static::$actions[$name];
 
+            // Here the hook callback method is called. The arguments for the "action" is the first param and the arguments are those provided by WordPress from the hook itself
             return static::{$action['method']}($action['args'], $arguments);
         }
     }
@@ -41,22 +43,45 @@ class CallbackManager
         ];
     }
 
+    /**
+     * Simply return true
+     *
+     * @return bool
+     */
     public static function returnTrue(): bool
     {
         return true;
     }
 
+    /**
+     * Simply return false
+     *
+     * @return bool
+     */
     public static function returnFalse(): bool
     {
         return false;
     }
 
+    /**
+     * Render a view
+     *
+     * @param $view
+     * @param $arguments
+     */
     public static function view($view, $arguments)
     {
         echo \Morningtrain\WP\View\View::render($view, $arguments);
     }
 
-    public static function invoke($class, $arguments)
+    /**
+     * Invoke a class
+     *
+     * @param $class
+     * @param  array  $arguments  These are the hook arguments eg. array of mimeTypes on "mime_type" filter
+     * @return mixed
+     */
+    public static function invoke($class, array $arguments): mixed
     {
         return (new $class)(...$arguments);
     }

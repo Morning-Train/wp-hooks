@@ -12,6 +12,14 @@ class Action extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
 
     protected bool $proactive = false;
 
+    /**
+     * Set the method for handling the action call
+     *
+     * This is the same as the callback that you may supply as a second param in the constructor
+     *
+     * @param  string|callable  $callback
+     * @return $this
+     */
     public function handle(string|callable $callback): static
     {
         $this->callback = $callback;
@@ -19,6 +27,12 @@ class Action extends \Morningtrain\WP\Hooks\Abstracts\AbstractHook
         return $this;
     }
 
+    /**
+     * Render a view as the action callback
+     *
+     * @param  string  $view
+     * @return $this
+     */
     public function view(string $view): static
     {
         $this->useCallbackManager('view', $view);
