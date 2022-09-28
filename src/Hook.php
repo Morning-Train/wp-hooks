@@ -33,7 +33,7 @@ class Hook
      * @return Action
      * @see https://developer.wordpress.org/reference/functions/add_action/
      */
-    public static function action(string|array $hook, ?callable $callback = null): Action
+    public static function action(string|array $hook, callable|string|null $callback = null): Action
     {
         $action = new Action($hook);
         if ($callback !== null) {
@@ -55,7 +55,7 @@ class Hook
      * @return Filter
      * @see https://developer.wordpress.org/reference/functions/add_filter/
      */
-    public static function filter(string|array $hook, ?callable $callback = null): Filter
+    public static function filter(string|array $hook, callable|string|null $callback = null): Filter
     {
         $filter = new Filter($hook);
         if ($callback !== null) {
