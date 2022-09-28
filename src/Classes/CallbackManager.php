@@ -7,8 +7,8 @@ namespace Morningtrain\WP\Hooks\Classes;
  */
 class CallbackManager
 {
-    // The actions known. As token => [method,args]
-    protected static array $actions = [];
+    // The callbacks known. As token => [method,args]
+    protected static array $callbacks = [];
 
     /**
      * Called as an action callback
@@ -20,11 +20,11 @@ class CallbackManager
     public static function __callStatic(string $name, array $arguments)
     {
         // If we know of an action/filter matching this name, then call it!
-        if (key_exists($name, static::$actions)) {
-            $action = static::$actions[$name];
+        if (key_exists($name, static::$callbacks)) {
+            $callback = static::$callbacks[$name];
 
             // Here the hook callback method is called. The arguments for the "action" is the first param and the arguments are those provided by WordPress from the hook itself
-            return static::{$action['method']}($action['args'], $arguments);
+            return static::{$callback['method']}($callback['args'], $arguments);
         }
     }
 
@@ -37,7 +37,7 @@ class CallbackManager
      */
     public static function addAction(string $token, string $method, $args = null)
     {
-        static::$actions[$token] = [
+        static::$callbacks[$token] = [
             'method' => $method,
             'args' => $args,
         ];
@@ -94,7 +94,7 @@ class CallbackManager
     public static function getToken(): string
     {
         $token = static::generateToken();
-        while (key_exists($token, static::$actions)) {
+        while (key_exists($token, static::$callbacks)) {
             $token = static::generateToken();
         }
 
