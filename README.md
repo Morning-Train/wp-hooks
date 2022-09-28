@@ -150,6 +150,21 @@ use [view composing](https://laravel.com/docs/9.x/views#view-composers).
 });
 ```
 
+### Using single use handlers (invokable)
+
+You can use a single use class like so:
+```php
+class FilterMimeTypes{
+ public function __invoke(array $mimeTypes)
+        {
+            $mimeTypes['webp'] = 'image/webp';
+            return $mimeTypes;
+        }
+}
+
+\Morningtrain\WP\Hooks\Hook::filter('mime_types',FilterMimeTypes::class);
+```
+
 ## Credits
 
 - [Mathias Munk](https://github.com/mrmoeg)
